@@ -7,7 +7,7 @@
     background: center/cover url('~@/assets/0.0.jpg');
     
     .login-logo {
-        width: 230px;
+        width: 80px;
         height: 80px;
         display: block;
         margin: 0 auto 20px;
@@ -26,5 +26,8 @@
 
     .login-cehckbox-label{
         color: #1890ff;
+    }
+    .login-form-button{
+        width: 100%;
     }
 }
