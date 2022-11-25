@@ -1,16 +1,15 @@
-import React from "react";
+// import React from "react";
 import LoginStore from "./login.Store";
 
 class RootStore {
   constructor() {
-    this.LoginStore = new LoginStore();
+    this.loginStore = new LoginStore();
 
     //
   }
 }
 
-const rootStore = new RootStore();
-const context = React.createContext(rootStore);
+// const context = React.createContext(rootStore);
 
-const useStore = () => React.useContext(context);
-export { useStore };
+// const useStore = () => React.useContext(rootStore);
+export default RootStore;

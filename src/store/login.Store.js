@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
-import { http } from "@/utils";
+import { http, getToken, setToken } from "@/utils";
 class LoginStore {
-  token = "";
+  token = getToken() || "";
   constructor() {
     //响应式
     makeAutoObservable(this);
@@ -12,8 +12,12 @@ class LoginStore {
     const res = await http.post("http://geek.itheima.net/v1_0/authorizations", {
       mobile,
       code,
-    });
-    this.token = res.data;
+    })
+
+    this.token = res.data.token;
+
+    setToken(this.token)
+    return res.data;
   };
 }
 

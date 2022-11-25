@@ -1,18 +1,32 @@
-import { Card, Button, Checkbox, Form, Input } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Card, Button, Checkbox, Form, Input, message } from "antd";
+import { VerifiedOutlined, PhoneOutlined } from "@ant-design/icons";
 import "./index.scss";
 import logo from "@/assets/logo.jpg";
-import {useStore} from '@/store'
+import RootStore from '@/store'
+import { useNavigate } from 'react-router-dom'
+
+
 
 function Login() {
-  const {loginStore} = useStore();
+  const { loginStore } = new RootStore();
+  const navigate = useNavigate();
+  // const [messageApi, contextHolder] = message.useMessage();
   const onFinish = (values) => {
     console.log("Success:", values);
+
     loginStore.getToken({
-      mobile:values.username,
-      code:values.password
+      mobile: values.username,
+      code: values.password
     })
-    
+      .then(res => {
+        navigate('/', { replace: true })
+        message.success('登录成功')
+        console.log(res);
+      })
+      .catch(err => {
+        message.error(err.message)
+      })
+
   };
   const onFinishFailed = (err) => {
     console.log(err);
@@ -20,6 +34,7 @@ function Login() {
 
   return (
     <div className="login">
+      {/* {contextHolder} */}
       <Card className="login-container">
         <img className="login-logo" src={logo} alt=""></img>
         <Form
@@ -32,6 +47,7 @@ function Login() {
           onFinish={onFinish}
           validateTrigger={["onBlur", "onChange"]}
         >
+          
           <Form.Item
             name="username"
             rules={[
@@ -48,7 +64,7 @@ function Login() {
           >
             <Input
               size="large"
-              prefix={<UserOutlined className="site-form-item-icon" />}
+              prefix={<PhoneOutlined className="site-form-item-icon" />}
               placeholder="Phone"
             />
           </Form.Item>
@@ -57,20 +73,20 @@ function Login() {
             rules={[
               {
                 required: true,
-                message: "请输入密码",
+                message: "请输入验证码",
               },
               {
                 len: 6,
-                message: "请输入6位密码",
+                message: "请输入6位验证码",
                 validateTrigger: "onBlur",
               },
             ]}
           >
             <Input
               size="large"
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="Password"
+              prefix={<VerifiedOutlined className="site-form-item-icon" />}
+
+              placeholder="验证码"
             />
           </Form.Item>
           <Form.Item>
@@ -82,8 +98,9 @@ function Login() {
               Forgot password
             </a> */}
           </Form.Item>
-
+          
           <Form.Item>
+          
             <Button
               size="large"
               type="primary"
