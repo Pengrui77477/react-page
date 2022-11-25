@@ -11,7 +11,11 @@ function App() {
       <div className="App">
         <Routes>
           { /** path component */}
-          <Route path='/' element={<AuthComponent> <Layout /></AuthComponent>}></Route>
+          <Route path='/' element={
+            <AuthComponent>
+              <Layout />
+            </AuthComponent>
+          }></Route>
           <Route path='/login' element={<Login />}></Route>
 
         </Routes>
