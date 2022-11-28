@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   DesktopOutlined,
   FileOutlined,
   PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu } from 'antd';
+} from "@ant-design/icons";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Layout, Menu, Popconfirm } from "antd";
+import "./index.scss";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -17,28 +17,34 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
+  getItem("数据概览", "/", <PieChartOutlined />),
+  getItem("内容管理", "/article", <DesktopOutlined />),
+  getItem("发布文章", "/public", <FileOutlined />),
 ];
-
 function Index() {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  // console.log(location);
   return (
     <Layout
       style={{
-        minHeight: '100vh',
+        minHeight: "100vh",
       }}
     >
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={(value) => setCollapsed(value)}
+      >
         <div className="logo" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={[pathname]}
+          mode="inline"
+          items={items}
+          onClick={(e) => navigate(e.key, { replace: true })}
+        />
       </Sider>
       <Layout className="site-layout">
         <Header
@@ -46,20 +52,26 @@ function Index() {
           style={{
             padding: 0,
           }}
-        />
+        >
+          <div className="user-info">
+            <span className="user-name">username</span>
+            <span className="user-logout">
+              <Popconfirm
+                title="是否确认退出？"
+                okText="退出"
+                cancelText="取消"
+              >
+                {/* <LogoutOutlined>退出</LogoutOutlined> */}
+                <span>退出</span>
+              </Popconfirm>
+            </span>
+          </div>
+        </Header>
         <Content
           style={{
-            margin: '0 16px',
+            margin: "0 16px",
           }}
         >
-          <Breadcrumb
-            style={{
-              margin: '16px 0',
-            }}
-          >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
           <div
             className="site-layout-background"
             style={{
@@ -67,19 +79,19 @@ function Index() {
               minHeight: 360,
             }}
           >
-            Bill is a cat.
+            <Outlet />
           </div>
         </Content>
         <Footer
           style={{
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           Ant Design ©2018 Created by Ant UED
         </Footer>
       </Layout>
     </Layout>
-  )
+  );
 }
 
-export default Index
+export default Index;

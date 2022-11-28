@@ -1,0 +1,21 @@
+.user-info{
+  // background-color: skyblue;
+  display: flex;
+  justify-content: flex-end;
+  .user-name{
+    color: #fff;
+  }
+  .user-logout{
+    width: 50px;
+    
+    // background-color: #fff;
+    margin: 0 30px;
+    span{
+      color: #fff;
+      cursor: pointer;
+    }
+    span:hover{
+      color: #666;
+    }
+  }
+}
