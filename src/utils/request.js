@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { getToken } from './token';
+import { history } from './history';
+
 const http = axios.create({
   baseURL:'http://geek.itheima.net/v1_0',
   timeout:5000
@@ -22,6 +24,13 @@ http.interceptors.response.use((response)=>{
 
   return response.data;
 },(err)=>{
+  if(err.response.status === 401){
+    //跳回到登录页
+    history.push('/login')
+    console.log('login');
+  }
+
+
   return Promise.reject(err)
 })
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   DesktopOutlined,
   FileOutlined,
@@ -7,6 +7,8 @@ import {
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu, Popconfirm } from "antd";
 import "./index.scss";
+import RootStore from '@/store'
+// import { observer } from 'mobx-react-lite'
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -25,7 +27,15 @@ function Index() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  // console.log(location);
+  const { userStore,loginStore } = new RootStore();
+
+  useEffect(()=>{
+    userStore.getUserInfo();
+  },[userStore])
+  const onConfirm = ()=>{
+    loginStore.logout();
+    navigate('/login')
+  }
   return (
     <Layout
       style={{
@@ -54,9 +64,10 @@ function Index() {
           }}
         >
           <div className="user-info">
-            <span className="user-name">username</span>
+            <span className="user-name">{userStore.userInfo}</span>
             <span className="user-logout">
               <Popconfirm
+              onConfirm={onConfirm}
                 title="是否确认退出？"
                 okText="退出"
                 cancelText="取消"
