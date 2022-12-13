@@ -22,7 +22,7 @@ function App() {
           }>
             <Route index element={<Home />}></Route>
             <Route path='/article' element={<Article />}></Route>
-            <Route path='/public' element={<Public />}></Route>
+            <Route path='/publish' element={<Public />}></Route>
           </Route>
           <Route path='/login' element={<Login />}></Route>
 

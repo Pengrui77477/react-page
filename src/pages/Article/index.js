@@ -1,4 +1,4 @@
-import { Card, Breadcrumb, Form, Radio, Select, Button, DatePicker, Table, Tag, Space } from 'antd'
+import { Card, Breadcrumb, Form, Radio, Select, Button, DatePicker, Table, Tag, Space, Popconfirm, message } from 'antd'
 import { Link } from 'react-router-dom'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import 'dayjs/locale/zh-cn'
@@ -9,6 +9,7 @@ import img404 from '@/assets/404.jpg'
 // import someImg from '@/assets/logo-social.png'
 import { useEffect, useState } from 'react'
 import { http } from '@/utils'
+import { history } from '@/utils/history'
 
 function Article() {
 
@@ -24,6 +25,7 @@ function Article() {
     per_page: 10
   })
 
+  //依赖不同，不能写到同一个useEffect中
   useEffect(() => {
     const loadChannelList = async () => {
       const res = await http.get('/channels')
@@ -34,15 +36,24 @@ function Article() {
   useEffect(() => {
     const loadList = async () => {
       const res = await http.get('/mp/articles', { params })
-      const {results,total_count} = res.data
+      const { results, total_count } = res.data
       setarticleData({
-        list:results,
-        count:total_count
+        list: results,
+        count: total_count
       })
     }
     loadList()
   }, [params])
 
+  const delArticle = async (data) => {
+    console.log(data);
+    await http.delete(`/mp/articles/${data.id}`)
+    message.success('删除成功')
+    setParams({
+      ...params,
+      per_page: 10
+    })
+  }
   const columns = [
     {
       title: '封面',
@@ -83,13 +94,22 @@ function Article() {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
             <Button
               type="primary"
-              danger
               shape="circle"
-              icon={<DeleteOutlined />}
+              icon={<EditOutlined />}
+              onClick={()=>{history.push(`/publish?id=${data.id}`)}}
             />
+            <Popconfirm title="确认删除？" onConfirm={() => { delArticle(data) }}>
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              // onClick={() => { }}
+              />
+            </Popconfirm>
+
           </Space>
         )
       }
@@ -97,7 +117,25 @@ function Article() {
   ]
 
   const onFinish = (value) => {
-    console.log(value);
+    const { channel_id, date, status } = value;
+    const _params = {};
+    if (status !== -1) {
+      _params.status = status;
+    }
+    if (channel_id) {
+      _params.channel_id = channel_id
+    }
+    if (date) {
+      _params.begin_pubdate = date[0].format('YYYY-MM-DD');
+      _params.end_pubdate = date[1].format('YYYY-MM-DD');
+    }
+    setParams({ ...params, ..._params })
+  }
+  const pageChange = (page) => {
+    setParams({
+      ...params,
+      page
+    })
   }
   return (
     <div>
@@ -153,7 +191,16 @@ function Article() {
       </Card>
       {/* 文章列表区域 */}
       <Card title={`根据筛选条件共查询到 ${articleData.count} 条结果：`}>
-        <Table rowKey="id" columns={columns} dataSource={articleData.list} />
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={articleData.list}
+          pagination={{
+            pageSize: params.per_page,
+            total: articleData.count,
+            onChange: pageChange
+          }}
+        />
       </Card>
     </div>
   )

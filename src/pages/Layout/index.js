@@ -21,7 +21,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("数据概览", "/", <PieChartOutlined />),
   getItem("内容管理", "/article", <DesktopOutlined />),
-  getItem("发布文章", "/public", <FileOutlined />),
+  getItem("发布文章", "/publish", <FileOutlined />),
 ];
 function Index() {
   const [collapsed, setCollapsed] = useState(false);
